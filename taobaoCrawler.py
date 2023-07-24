@@ -1,4 +1,4 @@
-import sys
+import sys, os
 import time
 import random
 import tkinter
@@ -25,6 +25,10 @@ gui_label_eta = {}
 
 # 淘宝页面版本 0旧 1新
 tbPageVersion = 0
+
+scrdir_path = os.path.abspath(os.path.dirname(__file__))
+driver_path = os.path.abspath(os.path.join(scrdir_path,r"..\chromedriver.exe"))
+chrome_path = os.path.abspath(os.path.join(scrdir_path,r"..\Cent\App\CentBrowser\chrome.exe "))
 
 
 # GUI函数
@@ -61,11 +65,20 @@ options = webdriver.ChromeOptions()
 options.add_experimental_option('excludeSwitches', ['enable-automation'])
 options.add_argument("--disable-blink-features")
 options.add_argument("--disable-blink-features=AutomationControlled")
+#options.add_argument("--allow-profiles-outside-user-dir")
+#options.add_argument('--enable-profile-shortcut-manager')
+#options.add_argument(r"user-data-dir=" + os.path.join(scrdir_path,r'..\UserData'))
+#options.add_argument("--profile-directory=TaoBao")
+
+options.add_experimental_option('useAutomationExtension', False)
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
-browser = webdriver.Chrome(options=options)
-browser.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
-    "source": """Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"""
-})
+options.binary_location = chrome_path
+service = webdriver.chrome.service.Service(driver_path)
+browser = webdriver.Chrome(options=options, service=service)
+browser.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+#browser.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
+#    "source": """Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"""
+#})
 
 # WebDriver控制打开页面
 browser.get('https://login.taobao.com/member/login.jhtml')
