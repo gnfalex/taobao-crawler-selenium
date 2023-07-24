@@ -8,6 +8,14 @@ from threading import Thread
 import re
 import pandas
 
+if (False):
+  import logging
+  logger = logging.getLogger('selenium')
+  logger.setLevel(logging.DEBUG)
+  handler = logging.FileHandler("log_path")
+  logger.addHandler(handler)
+
+
 f = open('./settings.ini', 'r+', encoding='utf8')
 CONST_KEY_WORD = str(f.readline().strip())
 CONST_BEGIN_PAGE = int(f.readline().strip())
@@ -62,14 +70,15 @@ gui_text['text'] = '正在启动浏览器'
 
 # WebDriver防检测
 options = webdriver.ChromeOptions()
+options.add_argument("--log-level=3");
 options.add_experimental_option('excludeSwitches', ['enable-automation'])
 options.add_argument("--disable-blink-features")
 options.add_argument("--disable-blink-features=AutomationControlled")
-#options.add_argument("--allow-profiles-outside-user-dir")
-#options.add_argument('--enable-profile-shortcut-manager')
-#options.add_argument(r"user-data-dir=" + os.path.join(scrdir_path,r'..\UserData'))
-#options.add_argument("--profile-directory=TaoBao")
-
+options.add_argument("--allow-profiles-outside-user-dir")
+options.add_argument('--enable-profile-shortcut-manager')
+options.add_argument(r"--user-data-dir=" + os.path.join(scrdir_path,r'..\UserData'))
+options.add_argument(r"--profile-directory=TaoBao")
+options.add_argument("--remote-debugging-port=9292")
 options.add_experimental_option('useAutomationExtension', False)
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
 options.binary_location = chrome_path
